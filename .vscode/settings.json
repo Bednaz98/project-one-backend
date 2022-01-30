@@ -1,0 +1,5 @@
+{
+  "appService.defaultWebAppToDeploy": "/subscriptions/fba7791d-a946-4781-9df3-314f2c6b5121/resourceGroups/TestingBankServerAppJosh/providers/Microsoft.Web/sites/project-one-backend-joshuabednaz",
+  "appService.deploySubpath": ".",
+  "cSpell.words": ["aunotothrized"]
+}
