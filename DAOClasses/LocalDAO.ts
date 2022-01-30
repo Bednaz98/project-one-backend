@@ -1,11 +1,10 @@
 import { Profile, Request } from "../Project1-GitUtil-Reimbursement/Types/Entity";
 import CosmosInteractions from "./DAOInterface"; 
-import {readFile, writeFile} from 'fs/promises';
 import ProfileManager from "../Project1-GitUtil-Reimbursement/Classes/ProfileManager";
 import RequestManager from "../Project1-GitUtil-Reimbursement/Classes/RequestManager";
 import { RequestStatus } from "../Project1-GitUtil-Reimbursement/Types/Enums";
 import Logger from "../Services/ServerLogger";
-
+import {readFile, writeFile} from 'fs/promises';
 
 export default class LocalDAO implements CosmosInteractions{
     private DebugLog:Logger;
