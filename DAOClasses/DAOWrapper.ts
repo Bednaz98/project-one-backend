@@ -1,7 +1,7 @@
 import { Profile, Request } from "../Project1-GitUtil-Reimbursement/Types/Entity";
 import DAOInterface from "./DAOInterface";
 import VirtualDAO from "./VirtualDAO";
-import LocalDAO from './LocalDAO'
+//import LocalDAO from './LocalDAO'
 import CosmosDAO from "./CosmosDAO";
 import EncryptionSys from "../Services/EncryptService";
 import Logger from "../Services/ServerLogger";
@@ -75,7 +75,7 @@ export default class DAOWrapper implements DAOInterface{
 
     WhichDao():number{
         if(this.DAOClass instanceof VirtualDAO){ return 0}
-        else if(this.DAOClass instanceof LocalDAO){ return 1}
+        //else if(this.DAOClass instanceof LocalDAO){ return 1}
         else if(this.DAOClass instanceof CosmosDAO){ return 2}
         else return -1;
         }
