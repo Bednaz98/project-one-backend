@@ -15,7 +15,7 @@ export default class DAOWrapper implements DAOInterface{
         this.DebugLog = InitLogger;
         switch(Setting){
             case    0:{ this.DAOClass = new VirtualDAO(InitLogger);break}// console.log('using VDAO')}
-            case    1:{ this.DAOClass = new LocalDAO(InitLogger);break}// console.log('using LocalDAO')}
+            //case    1:{ this.DAOClass = new LocalDAO(InitLogger);break}// console.log('using LocalDAO')}
             case    2:{ this.DAOClass = new CosmosDAO(InitLogger);break}// console.log('using ComosDAO')}
             default  :{ this.DAOClass = new VirtualDAO(InitLogger);break}// console.log('Wrapper using DEFAULT DAO')}
         }

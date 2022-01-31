@@ -3,7 +3,6 @@ import { Profile, Request } from "../Project1-GitUtil-Reimbursement/Types/Entity
 import ProfileManager from "../Project1-GitUtil-Reimbursement/Classes/ProfileManager";
 import RequestBuilder from "../Project1-GitUtil-Reimbursement/Classes/RequestBuilder";
 import DAOWrapper from "../DAOClasses/DAOWrapper";
-import { Container } from "@azure/cosmos";
 import ServerLogger from "../Services/ServerLogger";
 
 
