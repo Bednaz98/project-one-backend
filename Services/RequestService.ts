@@ -49,7 +49,6 @@ export default class RequestServices implements ManagerHTTPCLInterface{
         // checks to see if they have any manager privileges
         //if(! this.Checker.IsManger(FoundManager) ){ ThrowServerError(HTTPRequestErrorFlag.NotAManager) }
         // checks to see if this manager has permissions to access this request
-        const HasPermission:boolean = (this.Proc.ExtractRequestIDs(RequestID)).includes(FoundManager.id);
         //if(!HasPermission){ ThrowServerError(HTTPRequestErrorFlag.ManagerNotValidPrivileges) }
         // Checks to see if the manager is using invalid marking status
         //if(Type == RequestStatus.deleted){ ThrowServerError(HTTPRequestErrorFlag.RequestManagerDeleteError) }
@@ -76,36 +75,48 @@ export default class RequestServices implements ManagerHTTPCLInterface{
     }
 
     private async GetAllSentRequest(EmployeeID:string): Promise<Request[]> {
-        await this.DebugLog.print('Service Get all request called',0)
-        // Checks to see if the profile is exist
-        const FoundProfile:Profile = await this.DAOClass.GetSingleProfile(EmployeeID);
-        this.DebugLog.print('Service all request, profile found',0)
-        //if(!FoundProfile){ ThrowServerError(HTTPRequestErrorFlag.EmployeeNotFoundGeneral) }
-        //Gets all the request from the server  ### ?? Not sure which is better, getting the employee array and might cost more with a few dose request, this could require a lot of processing as time grows ??
-        const AllRequest:Request[] = await this.DAOClass.GetAllRequest();
-        this.DebugLog.print('Service all request, All request retrieved',0)
-        // Filter the request for this employee, already manages security
-        let filteredArray:Request[]=[]
-        for(let i =0; i < AllRequest.length ;i++){
-            if(AllRequest[i].RequestStatus !== RequestStatus.deleted ){ filteredArray.push( AllRequest[i] ) }
-        }
-        this.DebugLog.print('Service all request, filtering request',0)
-        const RequestFound:Request[] = this.Proc.FilterRequestByID(FoundProfile.id, false,filteredArray )
-        this.DebugLog.print('Service returning all request',0)
-        return RequestFound;
+        throw new Error("not implemented")
     }
-    async ManagerGetAllRequest(ManagerID:string):Promise<TransferRequestArray>{
+    async ManagerGetAllRequest(ManagerID:string, Type:RequestStatus):Promise<TransferRequestArray>{
         await this.DebugLog.print('Service Get All Manager request called',0)
         const Check = await this.CheckAdminPermissions(ManagerID)
+        await this.DebugLog.print(`Admin Permissions check: ${ManagerID} >> ${Check.ResultCheck}`,0)
         if(Check.ResultCheck){
             const AllRequest:Request[] = await this.DAOClass.GetAllRequest();
             const Transfer:TransferRequestArray = {ReturnRequestArray: AllRequest}
+            return Transfer;
         }
         else{
-            const FoundArray:Request[] = await this.GetAllSentRequest(ManagerID)
-            const Transfer:TransferRequestArray = {ReturnRequestArray: FoundArray }
-            await this.DebugLog.print(`Service Get All Manager request return, Total: ${Transfer.ReturnRequestArray.length}`,0);
-            return Transfer;}
+            const AllRequest:Request[] = await this.DAOClass.GetAllRequest();
+            let FilteredArray:Request[] =[]
+            for(let i =0; i <AllRequest.length; i++ ){
+                let IDArray = this.Proc.ExtractRequestIDs(AllRequest[i].id)
+                if(AllRequest[i].RequestStatus !==RequestStatus.deleted && IDArray[0] == ManagerID){
+                    FilteredArray.push(AllRequest[i] )
+                }
+            }
+    
+            switch(Type){
+                case RequestStatus.All:{
+                    await this.DebugLog.print(`ServiceGet all request of type, Filter process: {ALL}`,0);
+                    return {ReturnRequestArray:FilteredArray};
+                }
+                default:{
+                    await this.DebugLog.print(`ServiceGet all request of type, Filter process: ~${Type}`,0);
+                    // for all other request, grab a specific one
+                    let ReturnRequestArray:Request[] =[];
+                    for(let i =0; i < FilteredArray.length; i++ ){
+                        //only add to the stack if it is the type requested
+                        if( (FilteredArray[i].RequestStatus === Type)){ 
+                            ReturnRequestArray.push( FilteredArray[i] ) }
+                    }
+                    // Return the filtered request
+                    const Transfer:TransferRequestArray = {ReturnRequestArray:ReturnRequestArray}
+                    this.DebugLog.print(`Service return request of type, Total: ${Transfer.ReturnRequestArray.length}`,0)
+                    return Transfer;
+                }
+            }
+        }
     }
 
     async CheckManagerPermissions(ID:string):Promise<ResultReturnCheck> {

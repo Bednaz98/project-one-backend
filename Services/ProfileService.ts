@@ -167,23 +167,7 @@ export default class ProfileService implements ProfileHTTPCInterface{
 
     /**Used to recover all request this employee has access to*/ // This is marked as private because it does not filter based on admin privileges
     private async GetAllSentRequest(EmployeeID:string): Promise<Request[]> {
-        await this.DebugLog.print('Service Get all request called',0)
-        // Checks to see if the profile is exist
-        const FoundProfile:Profile = await this.DAOClass.GetSingleProfile(EmployeeID);
-        this.DebugLog.print('Service all request, profile found',0)
-        //if(!FoundProfile){ ThrowServerError(HTTPRequestErrorFlag.EmployeeNotFoundGeneral) }
-        //Gets all the request from the server  ### ?? Not sure which is better, getting the employee array and might cost more with a few dose request, this could require a lot of processing as time grows ??
-        const AllRequest:Request[] = await this.DAOClass.GetAllRequest();
-        this.DebugLog.print('Service all request, All request retrieved',0)
-        // Filter the request for this employee, already manages security
-        let filteredArray:Request[]=[]
-        for(let i =0; i < AllRequest.length ;i++){
-            if(AllRequest[i].RequestStatus !== RequestStatus.deleted ){ filteredArray.push( AllRequest[i] ) }
-        }
-        this.DebugLog.print('Service all request, filtering request',0)
-        const RequestFound:Request[] = this.Proc.FilterRequestByID(FoundProfile.id, true,filteredArray )
-        this.DebugLog.print('Service returning all request',0)
-        return RequestFound;
+        throw new Error('not implemented')
     }
 
     /** Used to filter request of a specific type*/
@@ -192,43 +176,32 @@ export default class ProfileService implements ProfileHTTPCInterface{
         //grabs the profile from the DAO
         const ReturnProfile:Profile = await this.DAOClass.GetSingleProfile(IDstring);
         await this.DebugLog.print('ServiceGet all request of type, found profile',0)
-        // if(!ReturnProfile) { ThrowServerError(HTTPRequestErrorFlag.EmployeeNotFoundGeneral)  }
-        //grabs all request from the DAO
-        const RequestArray:Request[] = await this.GetAllSentRequest(IDstring)
+        const RequestArray:Request[] = await this.DAOClass.GetAllRequest()
         await this.DebugLog.print(`ServiceGet all request of type, all request found, Total: ${RequestArray.length}`,0)
-        // quick check, if the DAO is empty, return an empty set
         if(! (RequestArray.length >0) ){await this.DebugLog.print('ServiceGet all request of type, No request in database',0); return {ReturnRequestArray:[]}}
-        
-        //quickly saves whether or not the employee is an admin
         const IsAdmin:boolean = await this.Checker.IsAdmin(ReturnProfile)
         await this.DebugLog.print(`ServiceGet all request of type, admin privileges check: ${IsAdmin}`,0)
-        //only admins can recover request marked as deleted
-        // if(! IsAdmin && (Type == RequestStatus.deleted) ){ ThrowServerError(HTTPRequestErrorFlag.RequestFilterDenied) }
-        // quick check if the request is grabbing all
-        /*else*/ 
+        let FilteredArray:Request[] =[]
+        for(let i =0; i <RequestArray.length; i++ ){
+            let IDArray = this.Proc.ExtractRequestIDs(RequestArray[i].id)
+            if(RequestArray[i].RequestStatus !==RequestStatus.deleted && IDArray[1] == IDstring){
+                FilteredArray.push(RequestArray[i] )
+            }
+        }
+
         switch(Type){
             case RequestStatus.All:{
                 await this.DebugLog.print(`ServiceGet all request of type, Filter process: {ALL}`,0);
-                let ReturnRequestArray:Request[] =[];
-                //quick check to send everything to the admin
-                if(IsAdmin){ return {ReturnRequestArray:ReturnRequestArray} }
-                for(let i =0; i < RequestArray.length; i++ ){
-                    //filters out request marked as deleted
-                    if(RequestArray[i].RequestStatus !== RequestStatus.deleted){ ReturnRequestArray.push( RequestArray[i] ) }
-                }
-                // returns all request without deleted request
-                await this.DebugLog.print(`Service returning request of type, Total: ${ReturnRequestArray.length}`,0)
-                return {ReturnRequestArray:ReturnRequestArray};
+                return {ReturnRequestArray:FilteredArray};
             }
             default:{
                 await this.DebugLog.print(`ServiceGet all request of type, Filter process: ~${Type}`,0);
                 // for all other request, grab a specific one
                 let ReturnRequestArray:Request[] =[];
-                for(let i =0; i < RequestArray.length; i++ ){
+                for(let i =0; i < FilteredArray.length; i++ ){
                     //only add to the stack if it is the type requested
-                    if( (RequestArray[i].RequestStatus === Type) && (RequestArray[i].RequestStatus !=RequestStatus.deleted) ){ 
-                        await this.DebugLog.print(`Service Get all request of type, adding request: Type${RequestArray[i].RequestStatus} === ${Type} >>  ${RequestArray[i].id}`,0); 
-                        ReturnRequestArray.push( RequestArray[i] ) }
+                    if( (FilteredArray[i].RequestStatus === Type)){ 
+                        ReturnRequestArray.push( FilteredArray[i] ) }
                 }
                 // Return the filtered request
                 const Transfer:TransferRequestArray = {ReturnRequestArray:ReturnRequestArray}

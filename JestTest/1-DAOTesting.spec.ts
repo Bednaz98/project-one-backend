@@ -17,7 +17,7 @@ describe('DAO Test', ()=>{
     const Logger:ServerLogger = new ServerLogger(0);
     const DAO:DAOWrapper = new DAOWrapper(0, Logger);
     it('DAO: Check to see if correct DAO is being used', ()=>{
-        expect(DAO.WhichDao()).toBe(0)
+        expect(DAO.WhichDao()).toBe(0);
     })
     //##############################################################################
 
@@ -37,15 +37,16 @@ describe('DAO Test', ()=>{
 
     const FirstNameArray:string[] = ['Admin','Manager','Employee']
     const LastNameArray:string[] = ['LastAd','ManLast','EmpLast']
+
     // Profile checks==================================
     it("DAO: Creating Profiles", async ()=>{
         let Check:boolean = true;
         for(let i = 0; i<FirstNameArray.length; i++ ){
             if(!Check) continue;
-            let Temp:Profile = await DAO.CreateProfile( (new ProfileManager({FirstName:FirstNameArray[i],LastName:LastNameArray[i]})).DeconstructProfile() )
-            Check = (Temp !== undefined)
+            let Temp:Profile = await DAO.CreateProfile( {...(new ProfileManager({FirstName:FirstNameArray[i],LastName:LastNameArray[i]})).DeconstructProfile(), id:"testing"} )
+            Check = (Temp !== undefined);
         }
-        expect(Check).toBe(true);
+        expect(Check).toBeTruthy();
     },JestTimeOut)
 
     let ProfileArray:Profile[] = [];

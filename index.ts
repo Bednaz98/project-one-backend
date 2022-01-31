@@ -61,7 +61,7 @@ app.get('/Connect', async (req,res)=>{
 app.post('/Login/:ID', async (req,res)=>{
     await  DebugLog.print('===============================================',0)
     const {ID} = req.params;
-    const {password} = req.body
+    const {password, AuthenticationString} = req.body
     await  DebugLog.print(`Login requested [${ID}]`,0)
     const LoginReturn = await LS.Login(ID,password)
     if(LoginReturn.ReturnProfile){
@@ -227,12 +227,14 @@ app.patch('/Manager/:ID', async (req,res)=>{
     }
 })
 // manager request search
-app.get('/Manager/:ID/:AuthorizationString', async (req,res)=>{
+app.get('/Manager/:ID/:Type/:AuthorizationString', async (req,res)=>{
+    console.log("HELOOOOOOO")
     await  DebugLog.print('===============================================',0)
     const {ID,AuthorizationString} = req.params;
+    const Type:RequestStatus= parseInt(req.params.Type)
     await  DebugLog.print(`HTTP Manager getting all request [${ID}] `,0)
     try {
-        const ReturnRequestArray = await RS.ManagerGetAllRequest(ID)
+        const ReturnRequestArray = await RS.ManagerGetAllRequest(ID,Type)
         res.status(200)
         await  DebugLog.print(`Manager search sent [${ID}]`,0)
         res.send(JSON.stringify({...ReturnRequestArray}));

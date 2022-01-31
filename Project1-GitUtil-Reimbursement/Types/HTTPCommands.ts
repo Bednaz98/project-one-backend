@@ -38,7 +38,7 @@ export interface ProfileHTTPCInterface {
 export interface ManagerHTTPCLInterface{
     /**used when a manager changes the request status*/
     ManagerChangeRequest(ManagerID:string, RequestID:string,Type:RequestStatus, Message:string ):Promise<TransferRequest>
-    ManagerGetAllRequest(ManagerID:string):Promise<TransferRequestArray>
+    ManagerGetAllRequest(ManagerID:string,Type:RequestStatus):Promise<TransferRequestArray>
     ManagerGetRecords():Promise<TransferRecords>
     CheckManagerPermissions(ID:string):Promise<ResultReturnCheck>
     CheckAdminPermissions(ID:string):Promise<ResultReturnCheck>

@@ -177,10 +177,10 @@ export default class  HTTPRequestHandler implements ProfileHTTPCInterface, Manag
         const ResultReturnRequest:TransferRequest = (await this.CreateHTTPRequest(Command, body, this.UserID)).data;
         return ResultReturnRequest;
     }
-    async ManagerGetAllRequest(ManagerID:string):Promise<TransferRequestArray> {
+    async ManagerGetAllRequest(ManagerID:string,Type:RequestStatus):Promise<TransferRequestArray> {
         const Command:HTTPCommands=  HTTPCommands.ManagerGetAllRequest ;
         const body ={}
-        let ResultReturnRequest:TransferRequestArray= (await this.CreateHTTPRequest(Command, body, `${this.UserID}/${this.AuthenticationString}`)).data;
+        let ResultReturnRequest:TransferRequestArray= (await this.CreateHTTPRequest(Command, body, `${this.UserID}/${Type}/${this.AuthenticationString}`)).data;
         return ResultReturnRequest
     }
     async ManagerGetRecords(): Promise<TransferRecords> {
@@ -241,13 +241,10 @@ export default class  HTTPRequestHandler implements ProfileHTTPCInterface, Manag
     async GetAllSentRequestOfType(IDstring:string, Type:RequestStatus):Promise<TransferRequestArray> {
         const Command:HTTPCommands=  HTTPCommands.GetAllSentRequest ;
         const body ={}
-        let ResultReturnRequest:TransferRequestArray;
-        switch(Type){
-            case 0:{return (await this.CreateHTTPRequest(Command, body, `${this.UserID}/${this.AuthenticationString}/${0}`)).data;}
-            case 1:{return  (await this.CreateHTTPRequest(Command, body, `${this.UserID}/${this.AuthenticationString}/${1}`)).data;}
-            case 2:{return  (await this.CreateHTTPRequest(Command, body, `${this.UserID}/${this.AuthenticationString}/${2}`)).data;}
-            default : {return  (await this.CreateHTTPRequest(Command, body, `${this.UserID}/${this.AuthenticationString}/${4}`)).data;}
-        }
+        let responseData:any =(await this.CreateHTTPRequest(Command, body, `${this.UserID}/${this.AuthenticationString}/${Type}`)).data
+        const ResultReturnRequest:TransferRequestArray = responseData
+
+        return ResultReturnRequest;
     }
 
 }
