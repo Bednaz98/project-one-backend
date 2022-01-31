@@ -49,17 +49,17 @@ describe('Utility Testing', ()=>{
         })
 
     it("Server Utility Test: Extract Request IDs, Valid Correct", async ()=>{ 
-        const Test:string = `X${Proc.Separator()}Y${Proc.Separator()}eh5grhe`;
+        const Test:string = `X~Y~eh5grhe`;
         const CheckArray:string[] = Proc.ExtractRequestIDs(Test);
         expect(CheckArray.length===2).toBeTruthy()
     })
     it("Server Utility Test: Extract Request IDs, Extra X", async ()=>{ 
-        const Test:string = `X${Proc.Separator()}Y${Proc.Separator()}eh5grhe`;
+        const Test:string = `X~Y~eh5grhe`;
         const CheckArray:string[] = Proc.ExtractRequestIDs(Test);
         expect(CheckArray[0] === 'X').toBeTruthy()
     })
     it("Server Utility Test: Extract Request IDs, Extra Y", async ()=>{ 
-        const Test:string = `X${Proc.Separator()}Y${Proc.Separator()}eh5grhe`;
+        const Test:string = `X~Y~eh5grhe`;
         const CheckArray:string[] = Proc.ExtractRequestIDs(Test);
         expect(CheckArray[1] === 'Y').toBeTruthy()
     })

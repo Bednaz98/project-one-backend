@@ -43,7 +43,7 @@ describe('DAO Test', ()=>{
         let Check:boolean = true;
         for(let i = 0; i<FirstNameArray.length; i++ ){
             if(!Check) continue;
-            let Temp:Profile = await DAO.CreateProfile( {...(new ProfileManager({FirstName:FirstNameArray[i],LastName:LastNameArray[i]})).DeconstructProfile(), id:"testing"} )
+            let Temp:Profile = await DAO.CreateProfile( {...(new ProfileManager({FirstName:FirstNameArray[i],LastName:LastNameArray[i]})).DeconstructProfile()} )
             Check = (Temp !== undefined);
         }
         expect(Check).toBeTruthy();
@@ -134,15 +134,15 @@ describe('DAO Test', ()=>{
         }
         expect(check).toBe(true);
     }, JestTimeOut)
-    it("DAO: Check Delete All Requests", async ()=>{
-        expect(  (await DAO.GetAllRequest()).length ).toBe(0)
-        // switch(DAO.WhichDao()){
-        //     case 0:{ expect(  (await DAO.GetAllRequest()).length ).toBe(0) }
-        //     case 1:{ expect(  (await DAO.GetAllRequest()).length  ).toBe(0) }
-        //     case 2:{ expect(true).toBe(true)}
-        //     default: { expect(false).toBe(true)}
-        // }
-    }, JestTimeOut)
+    // it("DAO: Check Delete All Requests", async ()=>{
+    //     expect(  (await DAO.GetAllRequest()).length ).toBe(0)
+    //     // switch(DAO.WhichDao()){
+    //     //     case 0:{ expect(  (await DAO.GetAllRequest()).length ).toBe(0) }
+    //     //     case 1:{ expect(  (await DAO.GetAllRequest()).length  ).toBe(0) }
+    //     //     case 2:{ expect(true).toBe(true)}
+    //     //     default: { expect(false).toBe(true)}
+    //     // }
+    // }, JestTimeOut)
 
     it("DAO: Check Delete Profiles", async ()=>{
         let check:boolean = true;
